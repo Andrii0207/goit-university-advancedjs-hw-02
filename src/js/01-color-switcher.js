@@ -12,12 +12,17 @@ const refs = {
 refs.start.addEventListener('click', onStart)
 refs.stop.addEventListener('click', onStop)
 
+refs.stop.setAttribute("disabled", "true");
 let id = null;
 
 function onStart() {
     id = setInterval((() => refs.body.style.backgroundColor = `${getRandomHexColor()}`), 1000)
+    refs.start.setAttribute("disabled", "true");
+    refs.stop.removeAttribute("disabled");
 }
 
 function onStop() {
     clearInterval(id)
+    refs.start.removeAttribute("disabled");
+    refs.stop.setAttribute("disabled", "true");
 }
