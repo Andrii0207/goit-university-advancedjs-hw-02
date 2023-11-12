@@ -13,18 +13,16 @@ const refs = {
 }
 
 refs.start.addEventListener('click', onStartCountDown)
-
 refs.start.setAttribute("disabled", "true")
-
-const currentDate = new Date().getTime();
-let deltaTime = null;
 
 const options = {
     enableTime: true,
     time_24hr: true,
     defaultDate: new Date(),
     minuteIncrement: 1,
+    selectedDate: null,
     onClose(selectedDates) {
+        options.selectedDate = selectedDates;
         const currentDate = options.defaultDate.getTime();
         const choosenDate = selectedDates[0].getTime();
 
@@ -37,18 +35,23 @@ const options = {
             });
         }
         refs.start.removeAttribute("disabled")
-        deltaTime = choosenDate - currentDate;
-        convertMs(deltaTime)
-        console.log("deltaTime >>>", deltaTime)
     },
 };
+
 flatpickr(refs.input, options)
 
 function onStartCountDown() {
     const DELAY = 1000;
     const id = setInterval((() => {
-        countDown(deltaTime)
-        console.log("start countdown")
+        const currentDate = new Date().getTime();
+        const selectedDate = options.selectedDate[0].getTime();
+        const deltaTime = selectedDate - currentDate;
+        convertMs(deltaTime)
+
+        if (deltaTime === 0) {
+            removeAttribute(id)
+            return;
+        }
     }), DELAY)
 }
 
@@ -68,5 +71,25 @@ function convertMs(ms) {
     // Remaining seconds
     const seconds = Math.floor((((ms % day) % hour) % minute) / second);
 
-    return { days, hours, minutes, seconds };
+    return addLeadingZero({ days, hours, minutes, seconds });
+}
+
+function addLeadingZero(obj) {
+    const { days, hours, minutes, seconds } = obj
+
+    const day = String(days).padStart(2, 0)
+    const hour = String(hours).padStart(2, 0)
+    const minute = String(minutes).padStart(2, 0)
+    const second = String(seconds).padStart(2, 0)
+
+    return createMarkup({ day, hour, minute, second })
+}
+
+function createMarkup({ day, hour, minute, second }) {
+    refs.days.innerHTML = day;
+    refs.hours.innerHTML = hour;
+    refs.minutes.innerHTML = minute;
+    refs.seconds.innerHTML = second;
+
+
 }
