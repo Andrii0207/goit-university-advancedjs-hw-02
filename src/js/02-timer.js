@@ -90,6 +90,4 @@ function createMarkup({ day, hour, minute, second }) {
     refs.hours.innerHTML = hour;
     refs.minutes.innerHTML = minute;
     refs.seconds.innerHTML = second;
-
-
 }
