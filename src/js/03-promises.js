@@ -9,8 +9,6 @@ const refs = {
 refs.form.addEventListener('submit', onSubmitPromise)
 
 const formData = {};
-let counter = 0;
-let DELAY = null;
 
 function onSubmitPromise(evt) {
   evt.preventDefault();
@@ -21,18 +19,21 @@ function onSubmitPromise(evt) {
   formData[amount.name] = amount.value
 
   const FIRST_DELAY = Number(formData.delay);
+  const AMOUNT = Number(formData.amount);
   const STEP = Number(formData.step)
+  let counter = 0;
+  let DELAY = FIRST_DELAY;
 
   const idCreatePromise = setInterval(() => {
     counter += 1;
-    DELAY = FIRST_DELAY + STEP * counter;
-
+    DELAY = FIRST_DELAY + STEP * (counter - 1);
     createPromise(counter, DELAY)
 
     if (counter === AMOUNT) {
       return clearInterval(idCreatePromise);
     }
   }, DELAY)
+  refs.form.reset()
 }
 
 function createPromise(position, delay) {
