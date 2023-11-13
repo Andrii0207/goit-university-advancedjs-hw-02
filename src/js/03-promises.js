@@ -1,4 +1,5 @@
-
+import iziToast from "izitoast";
+import "izitoast/dist/css/iziToast.min.css";
 
 const refs = {
   form: document.querySelector(".form"),
@@ -9,32 +10,28 @@ refs.form.addEventListener('submit', onSubmitPromise)
 
 const formData = {};
 let counter = 0;
+let DELAY = null;
 
 function onSubmitPromise(evt) {
   evt.preventDefault();
-  const elements = evt.currentTarget.elements;
+  const { delay, step, amount } = evt.currentTarget.elements;
 
-  formData[elements.delay.name] = elements.delay.value
-  formData[elements.step.name] = elements.step.value
-  formData[elements.amount.name] = elements.amount.value
-  console.log(formData)
+  formData[delay.name] = delay.value
+  formData[step.name] = step.value
+  formData[amount.name] = amount.value
 
-  const DELAY = formData.delay;
-  const AMOUNT = Number(formData.amount);
-  console.log(AMOUNT)
+  const FIRST_DELAY = Number(formData.delay);
+  const STEP = Number(formData.step)
 
   const idCreatePromise = setInterval(() => {
-    console.log("START")
     counter += 1;
-    console.log(counter)
+    DELAY = FIRST_DELAY + STEP * counter;
+
     createPromise(counter, DELAY)
 
     if (counter === AMOUNT) {
-      clearInterval(idCreatePromise);
-      console.log("THAT ALL")
-      return;
+      return clearInterval(idCreatePromise);
     }
-    console.log("INVISIBLE CONSOLE")
   }, DELAY)
 }
 
@@ -43,12 +40,21 @@ function createPromise(position, delay) {
 
   const promises = new Promise((resolve, reject) => {
     if (shouldResolve) {
-      resolve("✅ Все хорошо, лови промис")
+      resolve(iziToast.success({
+        title: 'OK',
+        message: `✅ Fulfilled promise ${position} in ${delay}ms`,
+        position: 'topRight',
+        timeout: 3000,
+      }))
     } else {
-      reject("❌ Все плохо, ничего не получится")
+      reject(iziToast.error({
+        title: 'ERROR',
+        message: `❌ Rejected promise ${position} in ${delay}ms`,
+        position: 'topRight',
+        timeout: 3000,
+      }))
     }
-    return;
   })
-
-  promises.then(resp => console.log(resp)).catch(err => console.log(err))
+  return promises.then(resp => console.log(resp)).catch(err => console.log(err))
 }
+
