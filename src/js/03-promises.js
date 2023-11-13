@@ -56,6 +56,6 @@ function createPromise(position, delay) {
       }))
     }
   })
+  console.log(promises)
   return promises.then(resp => console.log(resp)).catch(err => console.log(err))
 }
-
