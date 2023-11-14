@@ -41,21 +41,22 @@ function createPromise(position, delay) {
 
   const promises = new Promise((resolve, reject) => {
     if (shouldResolve) {
-      resolve(iziToast.success({
-        title: 'OK',
-        message: `✅ Fulfilled promise ${position} in ${delay}ms`,
-        position: 'topRight',
-        timeout: 3000,
-      }))
+      resolve({ position, delay })
     } else {
-      reject(iziToast.error({
-        title: 'ERROR',
-        message: `❌ Rejected promise ${position} in ${delay}ms`,
-        position: 'topRight',
-        timeout: 3000,
-      }))
+      reject({ position, delay })
     }
   })
-  console.log(promises)
-  return promises.then(resp => console.log(resp)).catch(err => console.log(err))
+
+  return promises.then(({ position, delay }) => (iziToast.success({
+    title: 'OK',
+    message: `✅ Fulfilled promise ${position} in ${delay}ms`,
+    position: 'topRight',
+    timeout: 3000,
+  }))).catch(({ position, delay }) => (iziToast.error({
+    title: 'OK',
+    message: `❌ Rejected promise ${position} in ${delay}ms`,
+    position: 'topRight',
+    timeout: 3000,
+  })))
 }
+
