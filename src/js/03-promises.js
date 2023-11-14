@@ -53,7 +53,7 @@ function createPromise(position, delay) {
     position: 'topRight',
     timeout: 3000,
   }))).catch(({ position, delay }) => (iziToast.error({
-    title: 'OK',
+    title: 'ERROR',
     message: `❌ Rejected promise ${position} in ${delay}ms`,
     position: 'topRight',
     timeout: 3000,
