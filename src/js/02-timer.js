@@ -42,14 +42,18 @@ flatpickr(refs.input, options)
 
 function onStartCountDown() {
     const DELAY = 1000;
+    refs.start.setAttribute("disabled", "true")
+    refs.input.setAttribute("disabled", "true")
+
     const id = setInterval((() => {
         const currentDate = new Date().getTime();
         const selectedDate = options.selectedDate[0].getTime();
         const deltaTime = selectedDate - currentDate;
+
         convertMs(deltaTime)
 
-        if (deltaTime === 0) {
-            removeAttribute(id)
+        if (deltaTime <= 1000) {
+            clearInterval(id)
             return;
         }
     }), DELAY)
