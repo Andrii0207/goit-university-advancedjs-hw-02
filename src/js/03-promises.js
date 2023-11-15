@@ -12,51 +12,56 @@ const formData = {};
 
 function onSubmitPromise(evt) {
   evt.preventDefault();
-  const { delay, step, amount } = evt.currentTarget.elements;
+  const { delay, step, amount } = evt.target;
 
   formData[delay.name] = delay.value
   formData[step.name] = step.value
   formData[amount.name] = amount.value
 
-  const FIRST_DELAY = Number(formData.delay);
-  const AMOUNT = Number(formData.amount);
-  const STEP = Number(formData.step)
-  let counter = 0;
-  let DELAY = FIRST_DELAY;
+  onStartPromise(formData)
 
-  const idCreatePromise = setInterval(() => {
-    counter += 1;
-    DELAY = FIRST_DELAY + STEP * (counter - 1);
-    createPromise(counter, DELAY)
-
-    if (counter === AMOUNT) {
-      return clearInterval(idCreatePromise);
-    }
-  }, DELAY)
   refs.form.reset()
 }
 
 function createPromise(position, delay) {
   const shouldResolve = Math.random() > 0.3;
 
-  const promises = new Promise((resolve, reject) => {
-    if (shouldResolve) {
-      resolve({ position, delay })
-    } else {
-      reject({ position, delay })
-    }
-  })
+  return new Promise((resolve, reject) => {
 
-  return promises.then(({ position, delay }) => (iziToast.success({
-    title: 'OK',
-    message: `✅ Fulfilled promise ${position} in ${delay}ms`,
-    position: 'topRight',
-    timeout: 3000,
-  }))).catch(({ position, delay }) => (iziToast.error({
-    title: 'ERROR',
-    message: `❌ Rejected promise ${position} in ${delay}ms`,
-    position: 'topRight',
-    timeout: 3000,
-  })))
+    setTimeout((() => {
+      if (shouldResolve) {
+        resolve({ position, delay })
+      } else {
+        reject({ position, delay })
+      }
+    }), delay)
+  })
 }
+
+function onStartPromise(formData) {
+  const { delay, step, amount } = formData;
+
+  const FIRST_DELAY = Number(delay);
+  const STEP = Number(step);
+  const AMOUNT = Number(amount);
+
+  for (let i = 1; i <= AMOUNT; i += 1) {
+    let DELAY = FIRST_DELAY + STEP * (i - 1);
+
+    createPromise(i, DELAY)
+      .then(({ position, delay }) => (iziToast.success({
+        title: 'OK',
+        message: `✅ Fulfilled promise ${position} in ${delay}ms`,
+        timeout: 3000,
+        position: 'topRight',
+      })))
+      .catch(({ position, delay }) => (iziToast.error({
+        title: 'ERROR',
+        message: `❌ Rejected promise ${position} in ${delay}ms`,
+        timeout: 3000,
+        position: 'topRight',
+      })))
+  }
+}
+
 
