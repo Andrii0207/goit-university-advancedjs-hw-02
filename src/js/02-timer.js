@@ -54,6 +54,8 @@ function onStartCountDown() {
 
         if (deltaTime <= 1000) {
             clearInterval(id)
+            refs.start.removeAttribute("disabled")
+            refs.input.removeAttribute("disabled")
             return;
         }
     }), DELAY)
